@@ -1,12 +1,12 @@
 = TbBranchDb
 
-Rake tasks to Easy-peasy branch a database in your Rails project.
+Rake tasks to easy-peasy branch a database in your Rails project.
 
 The tasks basically implement the commands describe here:
 
 http://mislav.uniqpath.com/rails/branching-the-database-along-with-your-code/
 
-See the above link for further information about the braching problem and the way it works.
+See the above link for further information about the branching problem and the way it works.
 
 == Requirements
 
@@ -48,15 +48,26 @@ This will update database.yml like so:
     database: onappto_development<%= suffix %>
   ...
 
+A backup of the original database.yml is saved to config/database.yml.orig.
+
 Then create a branch (a clone) of your master database:
 
   $ rake db:branch
 
-This will first create an entry in the .git/config and cloning the master database.
+This will first create an entry in the .git/config and then clones the master database.
+
+  # example output
+  git config --bool branch.BRANCH.database true
+  rake db:create
+  mysqldump -u root foo_development | mysql -u root foo_development_BRANCH
 
 If you want to cleanup the branch run:
 
   $ rake db:branch:cleanup
+
+  # example output
+  git config --bool branch.BRANCH.database false
+  mysql -u root -e 'drop database onappto_development_BRANCH'
 
 == Alternatives
 
