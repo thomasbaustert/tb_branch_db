@@ -1,0 +1,71 @@
+= TbBranchDb
+
+Rake tasks to Easy-peasy branch a database in your Rails project.
+
+The tasks basically implement the commands describe here:
+
+http://mislav.uniqpath.com/rails/branching-the-database-along-with-your-code/
+
+See the above link for further information about the braching problem and the way it works.
+
+== Requirements
+
+* Git as version control system
+* MySQL as database
+* Rails (this gem works only inside a Rails project)
+
+== Installation
+
+Add the gem to your bundler Gemfile:
+
+  # Gemfile
+  ...
+  group :development do
+    ...
+    gem 'tb_branch_db'
+  end
+
+And run:
+
+  $ bundle install
+
+== Usage
+
+First update your config/database.yml to allow branching:
+
+  $ rake db:branch:setup
+
+This will update database.yml like so:
+
+  # config/database.yml
+  <%
+    # http://mislav.uniqpath.com/rails/branching-the-database-along-with-your-code/
+    branch = `git symbolic-ref HEAD 2>/dev/null`.chomp.sub('refs/heads/', '')
+    suffix = `git config --bool branch.#{branch}.database`.chomp == 'true' ? "_#{branch}" : ""
+  %>
+  development:
+    ...
+    database: onappto_development<%= suffix %>
+  ...
+
+Then create a branch (a clone) of your master database:
+
+  $ rake db:branch
+
+This will first create an entry in the .git/config and cloning the master database.
+
+If you want to cleanup the branch run:
+
+  $ rake db:branch:cleanup
+
+== Alternatives
+
+* See https://github.com/sevenwire/db_branch
+
+== Credits
+
+* Mislav Marohnić (http://mislav.uniqpath.com/)
+
+
+
+
